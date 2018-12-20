@@ -2,7 +2,7 @@ PLUGIN_MODE = 'TEST-SUITE'	#	Possible values: 'DEBUG', 'TEST-SUITE', 'REAL'
 
 #	Set the following for debugging or testing mode
 DEBUG_BASE_FOLDER_PATH = 'D:\MTP related\Datasets\Sample'
-TEST_SUITE_BASE_FOLDER_PATH = 'D:\PoCRA\pocra urgent village charts (17-11-2018)\Washim'
+TEST_SUITE_BASE_FOLDER_PATH = 'C:/Users/Rahul/Desktop/temp/'
 DEBUG_OR_TEST_CROPS = ['bajra']	#	Possible values: subset of dict_crop.keys()
 DEBUG_OR_TEST_RABI_CROPS = ['harbhara']
 DEBUG_OR_TEST_GRADUATED_RENDERING_INTERVAL_POINTS = [0, 50]

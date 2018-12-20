@@ -214,6 +214,7 @@ class KharifModel:
 			year_num = 0
 			print 'years', self.rain.keys()
 			for year in self.rain:
+				if year_num > 0: break
 				year_num += 1
 				print 'checking whether already processed for year', year
 				if os.path.exists(os.path.join(path, year + '_' + ZONEWISE_BUDGET_CSV_FILENAME)): continue
@@ -226,7 +227,7 @@ class KharifModel:
 					self.crop_names,
 					self.sowing_threshold,
 					monsoon_end_date_index=self.monsoon_end_date_index,
-					cluster=str(path_num) + '/' + str(len(paths)),
+					cluster=str(path_num) + '/' + str(len(paths)-1),
 					year=str(year_num) + '/' + str(len(self.rain.keys()))
 				)
 
@@ -246,10 +247,12 @@ class KharifModel:
 					self.modelCalculator.zone_points_dict_non_ag_missing_LU,
 					self.modelCalculator.zones_layer
 				)
+				print self.circle_avg_year_dict
 				village_avg_year_dict = {
-					str(ID).rsplit('-',1)[0]: self.circle_avg_year_dict[self.zone_points_dict[ID][0].rain_circle]
-						for ID in zonewise_budgets
+					feature['VIL_NAME']: self.circle_avg_year_dict[feature['Circle'].lower()]
+						for feature in self.modelCalculator.zones_layer.feature_dict.values()
 				}
+				print village_avg_year_dict
 				op.output_zonewise_budget_to_csv	(
 					zonewise_budgets,
 					self.modelCalculator.crops,
@@ -348,6 +351,7 @@ class KharifModel:
 			with open(os.path.join(path, 'Rainfall.csv')) as f:
 				csvreader_for_avg_year = csv.DictReader(f)
 				self.circle_avg_year_dict = {row['Circle'].lower(): row['Year'] for row in csvreader_for_avg_year}
+				print self.circle_avg_year_dict
 			csvreader = csv.reader(open(os.path.join(TEST_SUITE_BASE_FOLDER_PATH, 'Rainfall_all.csv'))) # FOR urgent village charts (17-11-2018)
 			next(csvreader)
 			# self.rain = OrderedDict((row[0].lower(),{'year': row[1],'daily_rain':[float(val) for val in row[2:]]}) for row in csvreader)
