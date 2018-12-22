@@ -1,5 +1,6 @@
 
 import csv
+from datetime import date
 
 import itertools
 from collections import OrderedDict
@@ -220,7 +221,7 @@ class KharifModelOutputProcessor:
 			+ [str(ID).rsplit('-',1)[0] for ID in zonewise_budgets	if 'currnet fallow' in zonewise_budgets[ID]  for crop in currnet_fallow ]
 			+ [str(ID).rsplit('-',1)[0] for ID in zonewise_budgets	if 'currnet fallow' in zonewise_budgets[ID]  for crop in currnet_fallow ]
 			+ [str(ID).rsplit('-',1)[0] for ID in zonewise_budgets for pseudo_crop in pseudo_crops if pseudo_crop.name in zonewise_budgets[ID]]
-			)
+		)
 
 		rows.append(['Census Code']
 			+ [self.zone_area_village[ID]['code']	for ID in zonewise_budgets	if 'agricultural' in zonewise_budgets[ID] for crop in crops]
@@ -230,6 +231,25 @@ class KharifModelOutputProcessor:
 			+ [self.zone_area_village[ID]['code']	for ID in zonewise_budgets	if 'currnet fallow' in zonewise_budgets[ID]  for crop in currnet_fallow ]
 			+ [self.zone_area_village[ID]['code']	for ID in zonewise_budgets	for pseudo_crop in pseudo_crops if pseudo_crop.name in zonewise_budgets[ID]]
 		)
+
+		date_str = date.today().strftime('%d-%m-%Y')
+		rows.append(['Date of Creation']
+            + [date_str for ID in zonewise_budgets if 'agricultural' in zonewise_budgets[ID] for crop in crops]
+            + [date_str for ID in zonewise_budgets if 'agricultural' in zonewise_budgets[ID] for crop in rabi_crop_names]
+            + [date_str for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow]
+            + [date_str for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow]
+            + [date_str for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow]
+	        + [date_str for ID in zonewise_budgets for pseudo_crop in pseudo_crops if pseudo_crop.name in zonewise_budgets[ID]]
+        )
+
+		rows.append(['circle']
+            + [self.zone_area_village[ID]['circle'][2] for ID in zonewise_budgets if 'agricultural' in zonewise_budgets[ID] for crop in crops]
+            + [self.zone_area_village[ID]['circle'][2] for ID in zonewise_budgets if 'agricultural' in zonewise_budgets[ID] for crop in rabi_crop_names]
+            + [self.zone_area_village[ID]['circle'][2] for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow]
+            + [self.zone_area_village[ID]['circle'][2] for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow]
+            + [self.zone_area_village[ID]['circle'][2] for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow]
+            + [self.zone_area_village[ID]['circle'][2] for ID in zonewise_budgets for pseudo_crop in pseudo_crops if pseudo_crop.name in zonewise_budgets[ID]]
+        )
 
 		rows.append(['Zone']
 			+ ['zone-'+str(ID)	for ID in zonewise_budgets	if 'agricultural' in zonewise_budgets[ID] for crop in crops]
@@ -400,7 +420,7 @@ class KharifModelOutputProcessor:
 			+ [zonewise_budgets[ID]['currnet fallow'].GW_rech_total[i] - zonewise_budgets[ID]['currnet fallow'].GW_rech_monsoon_end[i] for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for i in range(len(currnet_fallow)) ]
 			+ [zonewise_budgets[ID]['currnet fallow'].GW_rech_total[i] - zonewise_budgets[ID]['currnet fallow'].GW_rech_monsoon_end[i] for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for i in range(len(currnet_fallow)) ]
 			+ [zonewise_budgets[ID][pseudo_crop.name].GW_rech_total[0] - zonewise_budgets[ID][pseudo_crop.name].GW_rech_monsoon_end[0] for ID in zonewise_budgets for pseudo_crop in pseudo_crops if pseudo_crop.name in zonewise_budgets[ID] ]
-			)
+		)
 
 		rows.append(['Post Monsoon Runoff']
 			+ [zonewise_budgets[ID]['agricultural'].runoff_total[i] - zonewise_budgets[ID]['agricultural'].runoff_monsoon_end[i] for ID in zonewise_budgets if 'agricultural' in zonewise_budgets[ID] for i in range (len(crops))]
@@ -409,7 +429,7 @@ class KharifModelOutputProcessor:
 			+ [zonewise_budgets[ID]['currnet fallow'].runoff_total[i] - zonewise_budgets[ID]['currnet fallow'].runoff_monsoon_end[i] for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for i in range(len(currnet_fallow)) ]
 			+ [zonewise_budgets[ID]['currnet fallow'].runoff_total[i] - zonewise_budgets[ID]['currnet fallow'].runoff_monsoon_end[i] for ID in zonewise_budgets if 'currnet fallow' in zonewise_budgets[ID] for i in range(len(currnet_fallow)) ]
 			+ [zonewise_budgets[ID][pseudo_crop.name].runoff_total[0] - zonewise_budgets[ID][pseudo_crop.name].runoff_monsoon_end[0] for ID in zonewise_budgets for pseudo_crop in pseudo_crops if pseudo_crop.name in zonewise_budgets[ID] ]
-			)
+		)
 
 		rows.append(['Rainfall Year']
 			+ [rain_sum[self.zone_area_village[ID]['circle']]['year'] for ID in zonewise_budgets	if 'agricultural' in zonewise_budgets[ID] for i in range(len(crops))]
@@ -422,13 +442,14 @@ class KharifModelOutputProcessor:
 
 
 		cols = zip(*rows)
-		cols.sort(key =  lambda x: x[2])
+		cols.sort(key =  lambda x: x[4]) # sort by zone-name
 		# writer.writerows(cols)
 
 		# csvwrite.close()
 		headers= cols[0]
 		village_list = {str(ID).rsplit('-',1)[0] for ID in zonewise_budgets}
 		data_by_village = {v: list([headers]) for v in village_list}
+		# print cols
 		for entry in cols[1:]:
 			data_by_village[entry[0]].append(list(entry))
 		write_excel(cols,zonewise_budget_csv_filepath)

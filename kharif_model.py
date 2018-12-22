@@ -214,7 +214,7 @@ class KharifModel:
 			year_num = 0
 			print 'years', self.rain.keys()
 			for year in self.rain:
-				if year_num > 0: break
+				# if year_num > 0: break
 				year_num += 1
 				print 'checking whether already processed for year', year
 				if os.path.exists(os.path.join(path, year + '_' + ZONEWISE_BUDGET_CSV_FILENAME)): continue
