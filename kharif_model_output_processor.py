@@ -397,7 +397,7 @@ class KharifModelOutputProcessor:
 
 		rows.append(['PET Crop End']
 			+ [crop.PET_sum_cropend[self.zone_area_village[ID]['circle']]	for ID in zonewise_budgets	if 'agricultural' in zonewise_budgets[ID] for crop in crops]
-			+ [0	for ID in zonewise_budgets	if 'agricultural' in zonewise_budgets[ID] for crop in rabi_crop_names]
+			+ [dict_rabi_crop[crop]	for ID in zonewise_budgets	if 'agricultural' in zonewise_budgets[ID] for crop in rabi_crop_names]
 			+ [crop.PET_sum_cropend[self.zone_area_village[ID]['circle']]	for ID in zonewise_budgets	if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow ]
 			+ [crop.PET_sum_cropend[self.zone_area_village[ID]['circle']]	for ID in zonewise_budgets	if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow ]
 			+ [crop.PET_sum_cropend[self.zone_area_village[ID]['circle']]	for ID in zonewise_budgets	if 'currnet fallow' in zonewise_budgets[ID] for crop in currnet_fallow ]
